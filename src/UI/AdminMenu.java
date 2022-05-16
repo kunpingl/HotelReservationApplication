@@ -1,8 +1,14 @@
 package UI;
 
+import api.AdminResource;
+import model.RoomType;
+
+import java.text.ParseException;
+
 public class AdminMenu {
   private static AdminMenu INSTANCE;
   private static final MainMenu mainMenu = MainMenu.getInstance();
+  private static final AdminResource adminResource = AdminResource.getInstance();
   private final String[] menuOptions = initMenuOptions();
 
   public static AdminMenu getInstance() {
@@ -23,25 +29,101 @@ public class AdminMenu {
     };
   }
 
-  protected void startAction() {
-    System.out.println("Please select a number for the menu option: ");
-    boolean isExit = false;
+  private void printAllCustomers() {
+    System.out.println(adminResource.getAllCustomers());
+  }
 
-    //    while (!isExit) {
-    //      String userInput = MenuUtility.scanner.nextLine();
-    //      switch (userInput) {
-    //        case "1" -> ;
-    //        case "2" -> printAllReservationsOfCustomer();
-    //        case "3" -> createAccount();
-    //        case "4" -> startAdmin();
-    //        case "5" -> {
-    //          isExit = true;
-    //          System.out.println("Have a great day, Good Bye!");
-    //        }
-    //        case "6" -> ;
-    //        default -> System.out.println("Please enter number from 1 to 5 to select a menu item:
-    // ");
-    //      }
-    //    }
+  private void printAllRooms() {
+    System.out.println(adminResource.getAllRooms());
+  }
+
+  private void printAllReservations() {
+    adminResource.displayAllReservations();
+  }
+
+  private void addARoom() {
+    boolean isRoomAdded = false;
+    while (!isRoomAdded) {
+      String roomNumber = getRoomNumber();
+      Double price = getPrice();
+      RoomType roomType = getRoomType();
+      if (adminResource.addARoom(roomNumber, price, roomType)) {
+        isRoomAdded = true;
+      } else {
+        System.out.println("Failed to add a room. Room number must be unique.");
+      }
+    }
+  }
+
+  private String getRoomNumber() {
+    while (true) {
+      System.out.println("Enter room number: ");
+      String input = MenuUtility.scanner.nextLine();
+      if (ValidationMethods.validateRoomNumber(input)) {
+        return input;
+      } else {
+        System.out.println("Room number need to be having 4 digits, except 0000.\nExample: 0001, 9999, 1234");
+      }
+    }
+  }
+
+  private Double getPrice() {
+    while (true) {
+      System.out.println("Enter room price: ");
+      Double input = parseDouble();
+      if (input != null) {
+        return input;
+      }
+    }
+  }
+
+  private Double parseDouble() {
+    try {
+      return MenuUtility.scanner.nextDouble();
+    } catch (Exception ex) {
+      System.out.println("Please enter a number, either integer or double: ");
+      return null;
+    } finally {
+      MenuUtility.scanner.nextLine();
+    }
+  }
+
+  private RoomType getRoomType() {
+    while (true) {
+      System.out.println("Enter room type, either Single(S) or Double(D): ");
+      String input = MenuUtility.scanner.nextLine();
+      if (ValidationMethods.isSingle(input)) {
+        return RoomType.SINGLE;
+      } else if (ValidationMethods.isDouble(input)) {
+        return RoomType.DOUBLE;
+      } else {
+        System.out.println("Input for RoomType is invalid.");
+      }
+    }
+  }
+
+  private void addTestingData() {
+    System.out.println("TODO");
+  }
+
+  protected void startAction() {
+    boolean isExit = false;
+      while (!isExit) {
+          MenuUtility.printMenu(
+                  "Admin Menu",
+                  "---------------------------------------------------",
+                  menuOptions);
+          System.out.println("Please select a number for the menu option: ");
+          String userInput = MenuUtility.scanner.nextLine();
+          switch (userInput) {
+            case "1" -> printAllCustomers();
+            case "2" -> printAllRooms();
+            case "3" -> printAllReservations();
+            case "4" -> addARoom();
+            case "5" -> addTestingData();
+            case "6" -> isExit = true;
+            default -> System.out.println("Please enter number from 1 to 6 to select a menu item:");
+          }
+        }
   }
 }

@@ -7,6 +7,7 @@ import model.Reservation;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 public class MainMenu {
@@ -54,6 +55,8 @@ public class MainMenu {
 
   private void findAndReserve() throws ParseException {
     String customerEmail = (!hasAccount()) ? createAccount() : getCustomerEmail();
+    if (customerEmail == null) return;
+
     Date checkInDate =
         getDate(
             new Date(),
@@ -78,8 +81,13 @@ public class MainMenu {
     boolean hasBookDone = false;
     while (!hasBookDone) {
       System.out.println("Rooms available at the given date range: ");
-      System.out.println(hotelResource.findRoom(checkInDate, checkOutDate));
+      List<IRoom> allAvailableRooms = hotelResource.findRoom(checkInDate, checkOutDate);
+      if (allAvailableRooms.size() == 0) {
+        System.out.println("There is no room available :(");
+        break;
+      }
       System.out.println("What room number would you like to reserve?");
+      System.out.println(allAvailableRooms);
 
       String input = MenuUtility.scanner.nextLine();
       if (ValidationMethods.validateRoomNumber(input)) {
@@ -100,7 +108,10 @@ public class MainMenu {
   }
 
   private void printAllReservationsOfCustomer() {
-    System.out.println(hotelResource.getCustomersReservations(getCustomerEmail()));
+    String customerEmail = getCustomerEmail();
+    if (customerEmail != null) {
+      System.out.println(hotelResource.getCustomersReservations(customerEmail));
+    }
   }
 
   private String getCustomerEmail() {
@@ -110,7 +121,8 @@ public class MainMenu {
       customerEmail = getEmail(false);
       isExisted = hotelResource.containsEmail(customerEmail);
       if (!isExisted) {
-        System.out.println("Your email is not in our system.");
+        System.out.println("Your email is not in our system. Please create an account first.");
+        return null;
       }
     }
     return customerEmail;
@@ -179,7 +191,7 @@ public class MainMenu {
     adminMenu.startAction();
   }
 
-  private void startAction() throws ParseException {
+  protected void startAction() throws ParseException {
     System.out.println("\nWelcome to the Hotel Reservation Application\n");
     boolean isExit = false;
     while (!isExit) {
@@ -199,6 +211,7 @@ public class MainMenu {
           isExit = true;
           System.out.println("Have a great day, Good Bye!");
         }
+        //TODO: catching "quit" to break some while loops and go back to the previous level of option
         default -> System.out.println("Please enter number from 1 to 5 to select a menu item: ");
       }
     }

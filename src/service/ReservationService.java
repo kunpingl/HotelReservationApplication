@@ -52,19 +52,6 @@ public class ReservationService {
   }
 
   /**
-   * Returns true if the checkInDate is before the checkOutDate, or they are the same date.
-   * Otherwise, return false.
-   *
-   * @param checkInDate the date the customer start moving in to the IRoom
-   * @param checkOutDate the date the customer moving out of the IRoom
-   * @return true if the checkInDate is before the checkOutDate, or they are the same date.
-   *     Otherwise, return false.
-   */
-  public boolean areDatesValid(Date checkInDate, Date checkOutDate) {
-    return checkInDate.compareTo(checkOutDate) <= 0;
-  }
-
-  /**
    * Returns a reservation for an IRoom in the system. The reservation will be added into the list
    * of allReservations and the list will get sorted. Assume that the checkInDate will be always
    * before the checkOutDate because it is checked in UI layer. Assume that only available room will

@@ -51,7 +51,8 @@ public class ValidationMethods {
     }
   }
 
-  protected static boolean validateEmail(String input, HotelResource hotelResource, boolean checkContainment) {
+  protected static boolean validateEmail(
+      String input, HotelResource hotelResource, boolean checkContainment) {
     if (checkContainment && hotelResource.containsEmail(input)) return false;
     return emailPattern.matcher(input).matches();
   }
@@ -64,5 +65,13 @@ public class ValidationMethods {
     // "0000" is reserved for admin room
     if (input.equals("0000")) return false;
     return roomNumberPattern.matcher(input).matches();
+  }
+
+  protected static boolean isSingle(String input) {
+    return input.equalsIgnoreCase("Single") || input.equalsIgnoreCase("S");
+  }
+
+  protected static boolean isDouble(String input) {
+    return input.equalsIgnoreCase("Double") || input.equalsIgnoreCase("D");
   }
 }
