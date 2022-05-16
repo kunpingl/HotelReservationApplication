@@ -83,15 +83,22 @@ public class MainMenu {
   }
 
   private void bookARoom(String customerEmail, Date checkInDate, Date checkOutDate, int count) {
-    // if (count == 2) return;
+    if (count == 2) return;
 
     boolean hasBookDone = false;
     while (!hasBookDone) {
+      if (count == 1) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
+        String formatCheckInDate = simpleDateFormat.format(checkInDate);
+        String formatCheckOutDate = simpleDateFormat.format(checkOutDate);
+        System.out.printf("Let's look at dates from %s to %s:\n", formatCheckInDate, formatCheckOutDate);
+      }
       System.out.println("Rooms available at the given date range: ");
       List<IRoom> allAvailableRooms = hotelResource.findRoom(checkInDate, checkOutDate);
       if (allAvailableRooms.size() == 0) {
         System.out.println("There is no room available :(\n");
-        // bookARoom(customerEmail, addDate(checkInDate), addDate(checkOutDate), count + 1);
+        // search for recommended rooms by adding both dates with 7 days, only do one time
+        bookARoom(customerEmail, addDate(checkInDate), addDate(checkOutDate), count + 1);
         break;
       }
       System.out.println("What room number would you like to reserve?");
