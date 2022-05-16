@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MainMenu {
-  private static MainMenu INSTANCE = MainMenu.getInstance();
-  private static final AdminMenu adminMenu = AdminMenu.getInstance();
+  private static final AdminMenu adminMenu = AdminMenu.getInstance();  private static MainMenu INSTANCE = MainMenu.getInstance();
   private static final HotelResource hotelResource = HotelResource.getInstance();
   private final String[] menuOptions = initMenuOptions();
 
@@ -224,4 +223,6 @@ public class MainMenu {
       }
     }
   }
+
+
 }

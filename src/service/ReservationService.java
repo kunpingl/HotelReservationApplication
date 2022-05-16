@@ -163,12 +163,12 @@ public class ReservationService {
       return key;
     }
 
-    public V getValue() {
-      return value;
-    }
-
     public void setKey(K key) {
       this.key = key;
+    }
+
+    public V getValue() {
+      return value;
     }
 
     public void setValue(V value) {

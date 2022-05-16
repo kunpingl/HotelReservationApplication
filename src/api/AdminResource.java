@@ -32,12 +32,23 @@ public class AdminResource {
     return false;
   }
 
-  public boolean addRoom(List<IRoom> rooms) {
+  public boolean addRooms(List<IRoom> rooms) {
     if (rooms == null) return false;
     for (IRoom eachRoom : rooms) {
       reservationService.addRoom(eachRoom);
     }
     return true;
+  }
+
+  public boolean addCustomers(String[] firstNames, String[] lastNames, String[] emails) {
+    if (firstNames.length == lastNames.length && lastNames.length == emails.length) {
+      int length = emails.length;
+      for (int i = 0; i < length; i++) {
+        customerService.addCustomer(firstNames[i], lastNames[i], emails[i]);
+      }
+      return true;
+    }
+    return false;
   }
 
   public List<IRoom> getAllRooms() {

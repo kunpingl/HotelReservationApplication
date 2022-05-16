@@ -3,13 +3,12 @@ package UI;
 import api.AdminResource;
 import model.Customer;
 import model.IRoom;
-import model.Reservation;
 import model.RoomType;
 
 public class AdminMenu {
-  private static AdminMenu INSTANCE;
   private static final MainMenu mainMenu = MainMenu.getInstance();
   private static final AdminResource adminResource = AdminResource.getInstance();
+  private static AdminMenu INSTANCE;
   private final String[] menuOptions = initMenuOptions();
 
   public static AdminMenu getInstance() {
@@ -112,7 +111,9 @@ public class AdminMenu {
   }
 
   private void addTestingData() {
-    System.out.println("TODO");
+    TestingData testingData = TestingData.getInstance();
+    testingData.initTestingData();
+    System.out.println("All customers and all rooms have been created!\n");
   }
 
   protected void startAction() {

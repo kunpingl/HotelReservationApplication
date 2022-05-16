@@ -31,7 +31,7 @@ public class CustomerService {
    *     return false
    */
   public boolean addCustomer(String firstName, String lastName, String email) {
-    //TODO: Delete since this checking logic might be trivial
+    // TODO: Delete since this checking logic might be trivial
     if (containsEmail(email)) return false;
     allCustomers.put(email, new Customer(firstName, lastName, email));
     return true;

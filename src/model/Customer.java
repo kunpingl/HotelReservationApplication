@@ -3,9 +3,9 @@ package model;
 import java.util.regex.Pattern;
 
 public class Customer {
-  private String firstName;
-  private String lastName;
-  private String email;
+  private final String firstName;
+  private final String lastName;
+  private final String email;
 
   public Customer(String firstName, String lastName, String email) {
     Pattern emailPattern = Pattern.compile("^(.+)@(.+).(com|edu)$");
