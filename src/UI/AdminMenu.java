@@ -1,9 +1,10 @@
 package UI;
 
 import api.AdminResource;
+import model.Customer;
+import model.IRoom;
+import model.Reservation;
 import model.RoomType;
-
-import java.text.ParseException;
 
 public class AdminMenu {
   private static AdminMenu INSTANCE;
@@ -30,11 +31,19 @@ public class AdminMenu {
   }
 
   private void printAllCustomers() {
-    System.out.println(adminResource.getAllCustomers());
+    System.out.println("All customers in our system:");
+    for (Customer eachCustomer : adminResource.getAllCustomers()) {
+      System.out.println(eachCustomer);
+    }
+    System.out.println();
   }
 
   private void printAllRooms() {
-    System.out.println(adminResource.getAllRooms());
+    System.out.println("All rooms in our system:");
+    for (IRoom eachRoom : adminResource.getAllRooms()) {
+      System.out.println(eachRoom);
+    }
+    System.out.println();
   }
 
   private void printAllReservations() {
@@ -50,7 +59,7 @@ public class AdminMenu {
       if (adminResource.addARoom(roomNumber, price, roomType)) {
         isRoomAdded = true;
       } else {
-        System.out.println("Failed to add a room. Room number must be unique.");
+        System.out.println("Failed to add a room. Room number must be unique.\n");
       }
     }
   }
@@ -62,7 +71,7 @@ public class AdminMenu {
       if (ValidationMethods.validateRoomNumber(input)) {
         return input;
       } else {
-        System.out.println("Room number need to be having 4 digits, except 0000.\nExample: 0001, 9999, 1234");
+        System.out.println("Room number need to be having 4 digits, except 0000.\nExample: 0001, 9999, 1234\n");
       }
     }
   }
@@ -97,7 +106,7 @@ public class AdminMenu {
       } else if (ValidationMethods.isDouble(input)) {
         return RoomType.DOUBLE;
       } else {
-        System.out.println("Input for RoomType is invalid.");
+        System.out.println("Input for RoomType is invalid.\n");
       }
     }
   }

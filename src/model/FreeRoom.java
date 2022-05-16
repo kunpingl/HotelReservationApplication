@@ -7,12 +7,6 @@ public class FreeRoom extends Room {
 
   @Override
   public String toString() {
-    return "Room "
-        + getRoomNumber()
-        + " is a "
-        + getRoomType()
-        + " with price: $"
-        + getRoomPrice()
-        + " (Free!)";
+    return "Room " + getRoomNumber() + ": {" + getRoomType() + ", $" + getRoomPrice() + " (Free)}";
   }
 }

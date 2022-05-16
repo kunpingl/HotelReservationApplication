@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class ValidationMethods {
   private static final Pattern datePattern = Pattern.compile("^\\d{2}/\\d{2}/\\d{4}$");
-  private static final Pattern emailPattern = Pattern.compile("^(.+)@(.+).(com|edu)$");
+  private static final Pattern emailPattern = Pattern.compile("^(.+)@(.+)\\.(com|edu)$");
   private static final Pattern namePattern = Pattern.compile("^([a-z]|[A-Z])+$");
   private static final Pattern roomNumberPattern = Pattern.compile("^[0-9]{4}$");
 
@@ -19,7 +19,10 @@ public class ValidationMethods {
   }
 
   protected static boolean isDate(String input) {
-    if (!datePattern.matcher(input).matches()) return false;
+    if (!datePattern.matcher(input).matches()) {
+      System.out.println("input date is not valid.\n");
+      return false;
+    }
     String[] dateTokens = input.split("/");
     int month = Integer.parseInt(dateTokens[0]);
     int day = Integer.parseInt(dateTokens[1]);
@@ -58,7 +61,11 @@ public class ValidationMethods {
   }
 
   protected static boolean validateName(String input) {
-    return namePattern.matcher(input).matches();
+    if (!namePattern.matcher(input).matches()) {
+      System.out.println("Sorry, our system only support a-z and A-Z for names currently\n");
+      return false;
+    }
+    return true;
   }
 
   protected static boolean validateRoomNumber(String input) {

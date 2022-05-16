@@ -61,18 +61,16 @@ public class MainMenu {
         getDate(
             new Date(),
                 """
-                        Enter check in date in format mm/dd/yyyy:
-                        Example: 05/10/2018
+                        Enter check in date in format mm/dd/yyyy. Example: 05/10/2018
                         Notice: Feb only has 28 or 29 days, and some months has only 30 days.""",
-            "You can only check in after today.");
+            "You can only check in after today.\n");
     Date checkOutDate =
         getDate(
             checkInDate,
                 """
-                        Enter check in date out format mm/dd/yyyy:
-                        Example: 05/10/2018
+                        Enter check in date out format mm/dd/yyyy. Example: 05/10/2018
                         Notice: Feb only has 28 or 29 days, and some months has only 30 days.""",
-            "You can only check out after the check in date.");
+            "You can only check out after the check in date.\n");
 
     bookARoom(customerEmail, checkInDate, checkOutDate);
   }
@@ -83,11 +81,11 @@ public class MainMenu {
       System.out.println("Rooms available at the given date range: ");
       List<IRoom> allAvailableRooms = hotelResource.findRoom(checkInDate, checkOutDate);
       if (allAvailableRooms.size() == 0) {
-        System.out.println("There is no room available :(");
+        System.out.println("There is no room available :(\n");
         break;
       }
       System.out.println("What room number would you like to reserve?");
-      System.out.println(allAvailableRooms);
+      printAllAvailableRooms(allAvailableRooms);
 
       String input = MenuUtility.scanner.nextLine();
       if (ValidationMethods.validateRoomNumber(input)) {
@@ -107,10 +105,20 @@ public class MainMenu {
     }
   }
 
+  private void printAllAvailableRooms(List<IRoom> allAvailableRooms) {
+    for (IRoom eachRoom : allAvailableRooms) {
+      System.out.println(eachRoom);
+    }
+    System.out.println();
+  }
+
   private void printAllReservationsOfCustomer() {
     String customerEmail = getCustomerEmail();
     if (customerEmail != null) {
-      System.out.println(hotelResource.getCustomersReservations(customerEmail));
+      for (Reservation eachReservation : hotelResource.getCustomersReservations(customerEmail)) {
+        System.out.println(eachReservation);
+      }
+      System.out.println();
     }
   }
 
@@ -121,7 +129,7 @@ public class MainMenu {
       customerEmail = getEmail(false);
       isExisted = hotelResource.containsEmail(customerEmail);
       if (!isExisted) {
-        System.out.println("Your email is not in our system. Please create an account first.");
+        System.out.println("Your email is not in our system. Please create an account first.\n");
         return null;
       }
     }
@@ -146,15 +154,15 @@ public class MainMenu {
     boolean isAccountCreated;
     while (true) {
       String email = getEmail(true);
-      String firstName = getName("Please enter your first name: ");
-      String lastName = getName("Please enter your last name: ");
+      String firstName = getName("Please enter your first name without whitespace: ");
+      String lastName = getName("Please enter your last name without whitespace: ");
       //TODO: Delete since this checking logic might be trivial
       isAccountCreated = hotelResource.createACustomer(firstName, lastName, email);
       if (!isAccountCreated) {
         System.out.println("Fail to create an account since the email you entered was existed in our system." +
                 " Please try another email:");
       } else {
-        System.out.printf("Account created successful! Glad to meet you, %s %s\n", firstName, lastName);
+        System.out.printf("Account created successful! Glad to meet you, %s %s\n\n", firstName, lastName);
         return email;
       }
     }
