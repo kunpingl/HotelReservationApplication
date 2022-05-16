@@ -6,7 +6,6 @@ import model.Reservation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -14,8 +13,7 @@ public class MainMenu {
   private static MainMenu INSTANCE = MainMenu.getInstance();
   private static final AdminMenu adminMenu = AdminMenu.getInstance();
   private static final HotelResource hotelResource = HotelResource.getInstance();
-  private String[] menuOptions;
-  protected static Scanner scanner;
+  private final String[] menuOptions = initMenuOptions();
 
   public static MainMenu getInstance() {
     if (INSTANCE == null) {
@@ -25,27 +23,25 @@ public class MainMenu {
   }
 
   public static void main(String[] args) throws ParseException {
-    scanner = new Scanner(System.in);
-    INSTANCE.initMenuOptions();
+    MenuUtility.scanner = new Scanner(System.in);
     INSTANCE.startAction();
-    scanner.close();
+    MenuUtility.scanner.close();
   }
 
-  private void initMenuOptions() {
-    menuOptions =
-        new String[] {
-          "1. Find and reserve a room",
-          "2. See my reservations",
-          "3. Create an Account",
-          "4. Admin",
-          "5. Exit"
-        };
+  private String[] initMenuOptions() {
+    return new String[] {
+            "1. Find and reserve a room",
+            "2. See my reservations",
+            "3. Create an Account",
+            "4. Admin",
+            "5. Exit"
+    };
   }
 
   private boolean hasAccount() {
     System.out.println("Do you have an account with us? y/n");
     while (true) {
-      String input = scanner.nextLine();
+      String input = MenuUtility.scanner.nextLine();
       if (ValidationMethods.isYes(input)) {
         return true;
       } else if (ValidationMethods.isNo(input)) {
@@ -57,8 +53,7 @@ public class MainMenu {
   }
 
   private void findAndReserve() throws ParseException {
-    String customerEmail = (!hasAccount()) ? createAccount() : getEmail(true);
-
+    String customerEmail = (!hasAccount()) ? createAccount() : getCustomerEmail();
     Date checkInDate =
         getDate(
             new Date(),
@@ -86,7 +81,7 @@ public class MainMenu {
       System.out.println(hotelResource.findRoom(checkInDate, checkOutDate));
       System.out.println("What room number would you like to reserve?");
 
-      String input = scanner.nextLine();
+      String input = MenuUtility.scanner.nextLine();
       if (ValidationMethods.validateRoomNumber(input)) {
         IRoom roomToBook = hotelResource.getRoom(input);
         if (roomToBook != null) {
@@ -105,22 +100,26 @@ public class MainMenu {
   }
 
   private void printAllReservationsOfCustomer() {
-    boolean isEmailExisted = false;
+    System.out.println(hotelResource.getCustomersReservations(getCustomerEmail()));
+  }
+
+  private String getCustomerEmail() {
+    boolean isExisted = false;
     String customerEmail = null;
-    while (!isEmailExisted) {
+    while (!isExisted) {
       customerEmail = getEmail(false);
-      isEmailExisted = hotelResource.containsEmail(customerEmail);
-      if (!isEmailExisted) {
-        System.out.println("Your entered email is not in our system.");
+      isExisted = hotelResource.containsEmail(customerEmail);
+      if (!isExisted) {
+        System.out.println("Your email is not in our system.");
       }
     }
-    System.out.println(hotelResource.getCustomersReservations(customerEmail));
+    return customerEmail;
   }
 
   private Date getDate(Date bottomLine, String introMsg, String errorMsg) throws ParseException {
     while (true) {
       System.out.println(introMsg);
-      String input = scanner.nextLine();
+      String input = MenuUtility.scanner.nextLine();
       if (ValidationMethods.isDate(input)) {
         Date enteredDate = new SimpleDateFormat("MM/dd/yyyy").parse(input);
         if (enteredDate.compareTo(bottomLine) > 0) {
@@ -138,7 +137,7 @@ public class MainMenu {
       String firstName = getName("Please enter your first name: ");
       String lastName = getName("Please enter your last name: ");
       //TODO: Delete since this checking logic might be trivial
-      isAccountCreated = hotelResource.createACustomer(email, firstName, lastName);
+      isAccountCreated = hotelResource.createACustomer(firstName, lastName, email);
       if (!isAccountCreated) {
         System.out.println("Fail to create an account since the email you entered was existed in our system." +
                 " Please try another email:");
@@ -151,8 +150,8 @@ public class MainMenu {
 
   private String getEmail(boolean checkContainment) {
     while (true) {
-      System.out.println("Please enter your email:\nEmail in format: name@domain.com");
-      String input = scanner.nextLine();
+      System.out.println("Please enter your email in format: name@domain.com");
+      String input = MenuUtility.scanner.nextLine();
       if (ValidationMethods.validateEmail(input, hotelResource, checkContainment)) {
         return input;
       } else {
@@ -164,12 +163,12 @@ public class MainMenu {
   private String getName(String msg) {
     while (true) {
       System.out.println(msg);
-      String input = scanner.nextLine();
+      String input = MenuUtility.scanner.nextLine();
       if (ValidationMethods.validateName(input)) {
         if (Character.isLowerCase((input.charAt(0)))) {
           char[] temp = input.toCharArray();
           temp[0] = Character.toUpperCase(temp[0]);
-          return Arrays.toString(temp);
+          return new String(temp);
         }
         return input;
       }
@@ -181,16 +180,16 @@ public class MainMenu {
   }
 
   private void startAction() throws ParseException {
-    MenuUtility.printMenu(
-        "Welcome to the Hotel Reservation Application",
-        "---------------------------------------------------",
-        menuOptions);
-
-    System.out.println("Please select a number for the menu option: ");
+    System.out.println("\nWelcome to the Hotel Reservation Application\n");
     boolean isExit = false;
-
     while (!isExit) {
-      String userInput = scanner.nextLine();
+      MenuUtility.printMenu(
+              "Main Menu",
+              "---------------------------------------------------",
+              menuOptions);
+      System.out.println("Please select a number for the menu option: ");
+
+      String userInput = MenuUtility.scanner.nextLine();
       switch (userInput) {
         case "1" -> findAndReserve();
         case "2" -> printAllReservationsOfCustomer();
