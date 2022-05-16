@@ -33,4 +33,19 @@ public class Customer {
   public String toString() {
     return "Name: " + firstName + " " + lastName + ", email: " + email;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null) return false;
+    if (this == o) return true;
+    if (this.getClass() != o.getClass()) return false;
+    return this.email.equals(((Customer) o).email);
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 31 * hash + ((email == null) ? 0 : email.hashCode());
+    return hash;
+  }
 }

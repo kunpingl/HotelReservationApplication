@@ -55,4 +55,26 @@ public class Reservation {
         + formatDate(checkOutDate)
         + "]";
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null) return false;
+    if (this == o) return true;
+    if (this.getClass() != o.getClass()) return false;
+    Reservation otherReservation = (Reservation) o;
+    return this.customer.equals(otherReservation.customer)
+        && this.room.equals(otherReservation.room)
+        && this.checkInDate.equals(otherReservation.checkInDate)
+        && this.checkOutDate.equals(otherReservation.checkOutDate);
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 31 * hash + ((customer == null) ? 0 : customer.hashCode());
+    hash = 31 * hash + ((room == null) ? 0 : room.hashCode());
+    hash = 31 * hash + ((checkInDate == null) ? 0 : checkInDate.hashCode());
+    hash = 31 * hash + ((checkOutDate == null) ? 0 : checkOutDate.hashCode());
+    return hash;
+  }
 }
