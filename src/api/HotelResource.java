@@ -30,6 +30,10 @@ public class HotelResource {
     return customerService.addCustomer(firstName, lastName, email);
   }
 
+  public boolean containsEmail(String email) {
+    return customerService.containsEmail(email);
+  }
+
   public IRoom getRoom(String roomNumber) {
     return reservationService.getARoom(roomNumber);
   }

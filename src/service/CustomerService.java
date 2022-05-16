@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class CustomerService {
   private static final Map<String, Customer> allCustomers = new HashMap<>();
@@ -32,21 +31,20 @@ public class CustomerService {
    *     return false
    */
   public boolean addCustomer(String firstName, String lastName, String email) {
-    if (allCustomers.containsKey(email)) return false;
+    //TODO: Delete since this checking logic might be trivial
+    if (containsEmail(email)) return false;
     allCustomers.put(email, new Customer(firstName, lastName, email));
     return true;
   }
 
   /**
-   * Returns true if the input email is in the format name@domain.com or name@domain.edu. The regex
-   * checking is not strong.
+   * Returns true if our system contains the given email.
    *
-   * @param email input customer's email
-   * @return true if the input email is in valid format. Otherwise, return false.
+   * @param email given email to check
+   * @return true if our system contains the given email. Otherwise, return false;
    */
-  public boolean isEmailValid(String email) {
-    Pattern emailPattern = Pattern.compile("^(.+)@(.+).(com|edu)$");
-    return emailPattern.matcher(email).matches();
+  public boolean containsEmail(String email) {
+    return allCustomers.containsKey(email);
   }
 
   /**

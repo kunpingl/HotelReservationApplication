@@ -4,7 +4,6 @@ import model.Customer;
 import model.IRoom;
 import model.Room;
 import model.RoomType;
-import utility.Pair;
 
 import java.util.*;
 
