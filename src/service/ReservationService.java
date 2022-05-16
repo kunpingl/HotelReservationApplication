@@ -73,6 +73,45 @@ public class ReservationService {
     return reservation;
   }
 
+  int getLeftBound(IRoom room) {
+    int left = 0, right = allReservations.size() - 1;
+
+    while (left <= right) {
+      int mid = left + (right - left) / 2;
+      Pair<String, Reservation> currentPair = allReservations.get(mid);
+      String reservedRoomNumber = currentPair.getKey();
+      if (reservedRoomNumber.compareTo(room.getRoomNumber()) >= 0) {
+        right = mid - 1;
+      } else {
+        left = mid + 1;
+      }
+    }
+
+    return (left < allReservations.size()
+            && allReservations.get(left).getKey().equals(room.getRoomNumber()))
+        ? left
+        : -1;
+  }
+
+  int getRightBound(IRoom room) {
+    int left = 0, right = allReservations.size() - 1;
+
+    while (left <= right) {
+      int mid = left + (right - left) / 2;
+      Pair<String, Reservation> currentPair = allReservations.get(mid);
+      String reservedRoomNumber = currentPair.getKey();
+      if (reservedRoomNumber.compareTo(room.getRoomNumber()) <= 0) {
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
+    }
+
+    return (right >= 0 && allReservations.get(right).getKey().equals(room.getRoomNumber()))
+        ? right
+        : -1;
+  }
+
   /**
    * Returns true if the given IRoom is not reserved in the given date range. Assume that the
    * allReservations is sorted by room number. This method is implemented using binary search.
@@ -83,26 +122,41 @@ public class ReservationService {
    * @return true if the given IRoom is not reserved in the given date range. Otherwise, return
    *     false;
    */
-  public boolean isReserved(IRoom room, Date checkInDate, Date checkOutDate) {
-    int left = 0, right = allReservations.size() - 1;
+  boolean isReserved(IRoom room, Date checkInDate, Date checkOutDate) {
+    int leftBound = getLeftBound(room);
+    int rightBound = getRightBound(room);
+    if (leftBound == -1 || rightBound == -1) return false;
 
-    while (left <= right) {
-      int mid = left + (right - left) / 2;
-      Pair<String, Reservation> currentPair = allReservations.get(mid);
-      String reservedRoomNumber = currentPair.getKey();
-      if (reservedRoomNumber.equals(room.getRoomNumber())) {
-        Reservation currentReservation = currentPair.getValue();
-        Date reservedCheckInDate = currentReservation.getCheckInDate();
-        Date reservedCheckOutDate = currentReservation.getCheckOutDate();
-        return checkInDate.compareTo(reservedCheckOutDate) < 0
-            && checkOutDate.compareTo(reservedCheckInDate) > 0;
-      } else if (reservedRoomNumber.compareTo(room.getRoomNumber()) < 0) {
-        left = mid + 1;
-      } else {
-        right = mid - 1;
+    for (int i = leftBound; i <= rightBound; i++) {
+      Reservation currentReservation = allReservations.get(i).getValue();
+      Date reservedCheckInDate = currentReservation.getCheckInDate();
+      Date reservedCheckOutDate = currentReservation.getCheckOutDate();
+      if (!isRoomAvailableDuringDateRange(
+          reservedCheckInDate, reservedCheckOutDate, checkInDate, checkOutDate)) {
+        return true;
       }
     }
     return false;
+  }
+
+  /**
+   * Returns true if the room is available at the given date range. Since room needs to be cleaned,
+   * for the same room, same day check-in and check-out is not working. For example, if room 0001
+   * was checked out 05-20-2022, the new check-in date for room 0001 should be 05-21-2022 or later.
+   *
+   * @param reservedCheckInDate the reserved check in date for this room
+   * @param reservedCheckOutDate the reserved check out date for this room
+   * @param newCheckInDate the new check in date that the customer wants to move in for this room
+   * @param newCheckOutDate the new check out date that the customer wants to move out for this room
+   * @return true if the room is available at the given date range. Otherwise, return false
+   */
+  private boolean isRoomAvailableDuringDateRange(
+      Date reservedCheckInDate,
+      Date reservedCheckOutDate,
+      Date newCheckInDate,
+      Date newCheckOutDate) {
+    return newCheckOutDate.compareTo(reservedCheckInDate) < 0
+        || newCheckInDate.compareTo(reservedCheckOutDate) > 0;
   }
 
   /**

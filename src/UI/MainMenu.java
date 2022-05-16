@@ -6,6 +6,7 @@ import model.Reservation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -71,16 +72,26 @@ public class MainMenu {
                         Notice: Feb only has 28 or 29 days, and some months has only 30 days.""",
             "You can only check out after the check in date.\n");
 
-    bookARoom(customerEmail, checkInDate, checkOutDate);
+    bookARoom(customerEmail, checkInDate, checkOutDate, 0);
   }
 
-  private void bookARoom(String customerEmail, Date checkInDate, Date checkOutDate) {
+  private Date addDate(Date currentDate) {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(currentDate);
+    calendar.add(Calendar.DATE, 7);
+    return calendar.getTime();
+  }
+
+  private void bookARoom(String customerEmail, Date checkInDate, Date checkOutDate, int count) {
+    // if (count == 2) return;
+
     boolean hasBookDone = false;
     while (!hasBookDone) {
       System.out.println("Rooms available at the given date range: ");
       List<IRoom> allAvailableRooms = hotelResource.findRoom(checkInDate, checkOutDate);
       if (allAvailableRooms.size() == 0) {
         System.out.println("There is no room available :(\n");
+        // bookARoom(customerEmail, addDate(checkInDate), addDate(checkOutDate), count + 1);
         break;
       }
       System.out.println("What room number would you like to reserve?");
