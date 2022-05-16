@@ -86,15 +86,15 @@ public class MainMenu {
       System.out.println("What room number would you like to reserve?");
       printAllAvailableRooms(allAvailableRooms);
 
-      String input = MenuUtility.scanner.nextLine();
-      if (ValidationMethods.validateRoomNumber(input)) {
-        IRoom roomToBook = hotelResource.getRoom(input);
-        if (roomToBook != null) {
+      String roomNumber = MenuUtility.scanner.nextLine();
+      if (ValidationMethods.validateRoomNumber(roomNumber)) {
+        IRoom roomToBook = hotelResource.getRoom(roomNumber);
+        if (roomToBook != null && allAvailableRooms.contains(roomToBook)) {
           Reservation reservation = hotelResource.bookARoom(customerEmail, roomToBook, checkInDate, checkOutDate);
           System.out.println(reservation);
           hasBookDone = true;
         } else {
-          System.out.println("There is no such a room %s available during the given date range.");
+          System.out.printf("There is no such a room %s available during the given date range.", roomNumber);
         }
       } else {
         System.out.println("The room number your entered is not valid." +
